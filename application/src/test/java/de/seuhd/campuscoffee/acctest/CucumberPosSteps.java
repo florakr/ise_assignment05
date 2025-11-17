@@ -4,6 +4,7 @@ import de.seuhd.campuscoffee.api.dtos.PosDto;
 import de.seuhd.campuscoffee.domain.model.CampusType;
 import de.seuhd.campuscoffee.domain.model.PosType;
 import de.seuhd.campuscoffee.domain.ports.PosService;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.*;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static de.seuhd.campuscoffee.TestUtils.*;
+import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -91,7 +93,12 @@ public class CucumberPosSteps {
         assertThat(retrievedPosList).isEmpty();
     }
 
-    // TODO: Add Given step for new scenario
+
+    @Given("POS list with following elements")
+    public void givenPOSListWithFollowingElements(List<PosDto> posList) {
+        createdPosList = createPos(posList);
+        assertThat(createdPosList).size().isEqualTo(posList.size());
+    }
 
     // When -----------------------------------------------------------------------
 
@@ -101,7 +108,35 @@ public class CucumberPosSteps {
         assertThat(createdPosList).size().isEqualTo(posList.size());
     }
 
-    // TODO: Add When step for new scenario
+
+    @When("I update the POS {string} with the following elements")
+    public void UpdateThePOSWithTheFollowingElements(String name, DataTable table) {
+        PosDto existing = retrievePosByName(name);
+
+        Map<String, String> row = table.asMaps(String.class, String.class).getFirst();
+
+        PosDto updated = PosDto.builder()
+                .id(existing.id())
+                .name(row.getOrDefault("name", existing.name()))
+                .description(row.getOrDefault("description", existing.description()))
+                .type(PosType.valueOf(row.getOrDefault("type", existing.type().name())))
+                .campus(CampusType.valueOf(row.getOrDefault("campus", existing.campus().name())))
+                .street(row.getOrDefault("street", existing.street()))
+                .houseNumber(row.getOrDefault("houseNumber", existing.houseNumber()))
+                .postalCode(Integer.valueOf(row.getOrDefault("postalCode", String.valueOf(existing.postalCode()))))
+                .city(row.getOrDefault("city", existing.city()))
+                .build();
+
+        updatedPos = given()
+                .contentType("application/json")
+                .body(updated)
+                .when()
+                .put("/api/pos/{id}", existing.id())
+                .then()
+                .statusCode(200)
+                .extract()
+                .as(PosDto.class);
+    }
 
     // Then -----------------------------------------------------------------------
 
@@ -113,5 +148,14 @@ public class CucumberPosSteps {
                 .containsExactlyInAnyOrderElementsOf(createdPosList);
     }
 
-    // TODO: Add Then step for new scenario
+
+    @Then("the POS list should contain the following elements in the same order")
+    public void thePOSListShouldContainTheFollowingElementsInTheSameOrder(List<PosDto> posList) {
+        List<PosDto> retrievedPosList = retrievePos();
+        assertThat(retrievedPosList)
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "createdAt", "updatedAt")
+                .containsExactlyInAnyOrderElementsOf(posList);
+
+    }
+
 }
