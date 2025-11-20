@@ -85,6 +85,12 @@ public class PosServiceImpl implements PosService {
         return savedPos;
     }
 
+    @Override
+    public void deleteById(@NonNull Long id) throws PosNotFoundException {
+        posDataService.deleteById(id);
+        log.info("Deleted POS with ID: {}", id);
+    }
+
     /**
      * Converts an OSM node to a POS domain object.
      * Maps OSM amenity types to POS types and validates required fields.

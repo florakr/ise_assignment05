@@ -96,4 +96,12 @@ public interface PosService {
      * @throws DuplicatePosNameException if a POS with the same name already exists
      */
     @NonNull Pos importFromOsmNode(@NonNull Long nodeId, @NonNull CampusType campusType) throws OsmNodeNotFoundException, OsmNodeMissingFieldsException, DuplicatePosNameException;
+
+    /**
+     * Deletes a Point of Sale by its unique identifier.
+     *
+     * @param id the unique identifier of the POS to delete; must not be null
+     * @throws PosNotFoundException if no POS exists with the given ID
+     */
+    void deleteById(@NonNull Long id) throws PosNotFoundException;
 }

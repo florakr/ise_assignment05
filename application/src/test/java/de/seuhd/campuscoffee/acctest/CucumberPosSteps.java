@@ -94,8 +94,14 @@ public class CucumberPosSteps {
     }
 
 
-    @Given("POS list with following elements")
+    /*@Given("POS list with following elements")
     public void givenPOSListWithFollowingElements(List<PosDto> posList) {
+        createdPosList = createPos(posList);
+        assertThat(createdPosList).size().isEqualTo(posList.size());
+    }*/
+
+    @Given("a POS list with the following elements")
+    public void aPOSListWithTheFollowingElements(List<PosDto> posList) {
         createdPosList = createPos(posList);
         assertThat(createdPosList).size().isEqualTo(posList.size());
     }

@@ -4,6 +4,7 @@ import de.seuhd.campuscoffee.domain.model.Pos;
 import de.seuhd.campuscoffee.domain.tests.TestFixtures;
 import org.junit.jupiter.api.Test;
 import java.util.List;
+import java.util.Objects;
 
 import de.seuhd.campuscoffee.TestUtils;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -93,5 +94,18 @@ public class PosSystemTests extends AbstractSysTest {
                 .usingRecursiveComparison()
                 .ignoringFields("createdAt", "updatedAt")
                 .isEqualTo(posToUpdate);
+    }
+
+    @Test
+    void deletePos() {
+        List<Pos> createdPosList = TestFixtures.createPosFixtures(posService);
+        Pos posToDelete = createdPosList.getFirst();
+        Objects.requireNonNull(posToDelete.id());
+
+        List<Integer> statusCodes = TestUtils.deletePos(List.of(posToDelete.id(), posToDelete.id()));
+
+        // First deletion should return 204 No Content, second should return 404 Not Found
+        assertThat(statusCodes)
+                .containsExactly(204, 404);
     }
 }

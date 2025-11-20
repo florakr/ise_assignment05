@@ -93,4 +93,17 @@ public class TestUtils {
                 )
                 .collect(Collectors.toList());
     }
+
+    public static List<Integer> deletePos(List<Long> posIdList) {
+        return posIdList.stream()
+                .map(posID -> given()
+                        .when()
+                        .delete("/api/pos/{id}", posID)
+                        .then()
+                        .extract()
+                        .response()
+                        .statusCode()
+                )
+                .collect(Collectors.toList());
+    }
 }

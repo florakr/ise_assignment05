@@ -84,6 +84,15 @@ class PosDataServiceImpl implements PosDataService {
         }
     }
 
+    @Override
+    public void deleteById(@NonNull Long id) throws PosNotFoundException {
+        if (!posRepository.existsById(id)) {
+            throw new PosNotFoundException(id);
+        }
+
+        posRepository.deleteById(id);
+    }
+
     /**
      * Checks if the exception is due to duplicate POS name constraint violation.
      */

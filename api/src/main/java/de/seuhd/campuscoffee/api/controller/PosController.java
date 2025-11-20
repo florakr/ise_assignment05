@@ -42,8 +42,8 @@ public class PosController {
         );
     }
 
-    @RequestMapping(value="filter", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<PosDto> getByName(
+    @GetMapping("/filter")
+    public ResponseEntity<PosDto> getByName(
             @RequestParam("name") String name){
         return ResponseEntity.ok(
                 posDtoMapper.fromDomain(posService.getByName(name))
@@ -79,6 +79,13 @@ public class PosController {
             throw new IllegalArgumentException("POS ID in path and body do not match.");
         }
         return ResponseEntity.ok(upsert(posDto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id) {
+        posService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     /**

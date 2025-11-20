@@ -56,4 +56,12 @@ public interface PosDataService {
      * @throws PosNotFoundException if attempting to update a POS that does not exist
      */
     @NonNull Pos upsert(@NonNull Pos pos) throws PosNotFoundException;
+
+    /**
+     * Deletes a POS entity by its unique identifier.
+     *
+     * @param id the unique identifier of the POS to delete; must not be null
+     * @throws PosNotFoundException if no POS exists with the given ID
+     */
+    void deleteById(@NonNull Long id) throws PosNotFoundException;
 }
